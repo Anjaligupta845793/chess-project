@@ -6,6 +6,26 @@ import { Chessboard } from "react-chessboard";
 const ChessGame = () => {
   const [game, setgame] = useState(new Chess());
   const [moveLog, setmoveLog] = useState([]);
+  const [type, settype] = useState("");
+
+  const pieceIcons = {
+    K: "♔",
+    Q: "♕",
+    R: "♖",
+    B: "♗",
+    N: "♘",
+    P: "♙",
+    k: "♚",
+    q: "♛",
+    r: "♜",
+    b: "♝",
+    n: "♞",
+    p: "♟",
+  };
+
+  const convertToIcon = (move) => {
+    return move.replace(/[KQRBNP]/gi, (char) => pieceIcons[char] || char);
+  };
 
   const containerStyle = {
     width: "1200px",
@@ -71,11 +91,16 @@ const ChessGame = () => {
           const moveNotation = `${game.turn() === "w" ? "black" : "white"}: ${
             move.san
           }`;
-          setMoveLog((prev) => [
-            ...prev,
-            { white: whiteMove, black: blackMove },
-          ]);
-          return true;
+          setmoveLog((prev) => {
+            const updatedLog = [...prev];
+            if (game.turn() === "b") {
+              updatedLog.push({ white: move.san });
+            } else {
+              updatedLog[updatedLog.length - 1].black = move.san;
+            }
+            return updatedLog;
+          });
+          return move !== null;
         }
       } catch (error) {
         return false;
@@ -121,20 +146,22 @@ const ChessGame = () => {
       </div>
       <div style={moveLogStyle}>
         <h1>moveLog</h1>
+
         {moveLog.length > 0 ? (
-          <>
+          <table>
+            {" "}
             <tbody>
-              {moveLog.map((move, index) => (
-                <tr key={index} style={{ borderBottom: "1px solid #ccc" }}>
+              {moveLog.map((item, index) => (
+                <tr key={index}>
                   <td>{index + 1}</td>
-                  <td>{move?.white || ""}</td>
-                  <td>{move?.black || ""}</td>
+                  <td>{convertToIcon(item.white || "")}</td>
+                  <td>{convertToIcon(item.black || "")}</td>
                 </tr>
               ))}
             </tbody>
-          </>
+          </table>
         ) : (
-          <div>no moves yet</div>
+          <p>no moves yet</p>
         )}
       </div>
     </div>
