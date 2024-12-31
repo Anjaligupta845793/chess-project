@@ -151,7 +151,7 @@ const ChessGame = () => {
               className="px-3 py-2 font-bold text-black rounded bg-blue-400"
               onClick={resetGame}
             >
-              Start New Game
+              Reset Game
             </button>
           </div>
 
